@@ -19,7 +19,7 @@ package org.digitalcampus.oppia.activity;
 
 import java.util.ArrayList;
 
-import org.digitalcampus.mobile.learning.R;
+import org.maf.oppia.R;
 import org.digitalcampus.oppia.adapter.SearchResultsListAdapter;
 import org.digitalcampus.oppia.application.DatabaseManager;
 import org.digitalcampus.oppia.application.DbHelper;

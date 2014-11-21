@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.digitalcampus.mobile.learning"
+    package="org.maf.oppia"
     android:versionCode="49"
     android:versionName="5.0.0">
 
