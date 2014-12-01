@@ -17,6 +17,7 @@
 
 package org.digitalcampus.oppia.application;
 
+import org.maf.oppia.R;
 import org.digitalcampus.oppia.activity.PrefsActivity;
 import org.digitalcampus.oppia.task.SubmitQuizTask;
 import org.digitalcampus.oppia.task.SubmitTrackerMultipleTask;
@@ -31,6 +32,8 @@ import android.preference.PreferenceManager;
 public class MobileLearning extends Application {
 
 	public static final String TAG = MobileLearning.class.getSimpleName();
+	
+	public static final int APP_LOGO = R.drawable.maf_logo;
 	
 	public static final String COURSE_XML = "module.xml";
 	public static final String COURSE_SCHEDULE_XML = "schedule.xml";
