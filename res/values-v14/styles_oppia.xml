@@ -47,7 +47,7 @@
     </style>
 
     <style name="Oppia.ActionBar.TitleTextStyle" parent="@style/Widget.Sherlock.ActionBar.Solid">
-        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:textColor">@color/text_light</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">20sp</item>
     </style>
