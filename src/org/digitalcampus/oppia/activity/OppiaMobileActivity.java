@@ -56,6 +56,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -165,9 +166,9 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 	}
 
 	private void updateReminders(){
-		if(prefs.getBoolean("prefShowScheduleReminders", false)){
+		if(prefs.getBoolean(PrefsActivity.PREF_SHOW_SCHEDULE_REMINDERS, false)){
 			DbHelper db = new DbHelper(OppiaMobileActivity.this);
-			int max = Integer.valueOf(prefs.getString("prefNoScheduleReminders", "2"));
+			int max = Integer.valueOf(prefs.getString(PrefsActivity.PREF_NO_SCHEDULE_REMINDERS, "2"));
 			long userId = db.getUserId(prefs.getString(PrefsActivity.PREF_USER_NAME, ""));
 			ArrayList<Activity> activities = db.getActivitiesDue(max, userId);
 			DatabaseManager.getInstance().closeDatabase();
@@ -181,7 +182,7 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 	
 	private void scanMedia() {
 		long now = System.currentTimeMillis()/1000;
-		if (prefs.getLong("prefLastMediaScan", 0)+3600 > now) {
+		if (prefs.getLong(PrefsActivity.PREF_LAST_MEDIA_SCAN, 0)+3600 > now) {
 			LinearLayout ll = (LinearLayout) this.findViewById(R.id.home_messages);
 			ll.setVisibility(View.GONE);
 			return;
@@ -201,6 +202,8 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		UIUtils.showUserData(menu,this);
+		MenuItem item = (MenuItem) menu.findItem(R.id.menu_logout);
+		item.setVisible(prefs.getBoolean(PrefsActivity.PREF_LOGOUT_ENABLED, true));
 	    return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -272,8 +275,8 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 				Editor editor = prefs.edit();
 				editor.putString(PrefsActivity.PREF_USER_NAME, "");
 				editor.putString(PrefsActivity.PREF_API_KEY, "");
-				editor.putInt("prefBadges", 0);
-				editor.putInt("prefPoints", 0);
+				editor.putInt(PrefsActivity.PREF_BADGES, 0);
+				editor.putInt(PrefsActivity.PREF_POINTS, 0);
 				editor.commit();
 
 				// restart the app
@@ -292,17 +295,21 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
 		getMenuInflater().inflate(R.menu.course_context_menu, menu);
+		super.onCreateContextMenu(menu, v, menuInfo);
 	}
-
+	
 	@Override
 	public boolean onContextItemSelected(android.view.MenuItem item) {
 		android.widget.AdapterView.AdapterContextMenuInfo info = (android.widget.AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		tempCourse = (Course) info.targetView.getTag();
 		switch (item.getItemId()) {
 			case R.id.course_context_delete:
-				confirmCourseDelete();
+				if (prefs.getBoolean(PrefsActivity.PREF_DELETE_COURSE_ENABLED, true)){
+					confirmCourseDelete();
+				} else {
+					Toast.makeText(this, this.getString(R.string.warning_delete_disabled), Toast.LENGTH_LONG).show();
+				}
 				return true;
 			case R.id.course_context_reset:
 				confirmCourseReset();
@@ -327,7 +334,7 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 				File f = new File(tempCourse.getLocation());
 				FileUtils.deleteDir(f);
 				Editor e = prefs.edit();
-				e.putLong("prefLastMediaScan", 0);
+				e.putLong(PrefsActivity.PREF_LAST_MEDIA_SCAN, 0);
 				e.commit();
 				displayCourses(userId);
 			}
@@ -363,19 +370,19 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		if(key.equalsIgnoreCase("prefServer")){
+		if(key.equalsIgnoreCase(PrefsActivity.PREF_SERVER)){
 			Editor editor = sharedPreferences.edit();
-			if(!sharedPreferences.getString("prefServer", "").endsWith("/")){
-				String newServer = sharedPreferences.getString("prefServer", "").trim()+"/";
-				editor.putString("prefServer", newServer);
+			if(!sharedPreferences.getString(PrefsActivity.PREF_SERVER, "").endsWith("/")){
+				String newServer = sharedPreferences.getString(PrefsActivity.PREF_SERVER, "").trim()+"/";
+				editor.putString(PrefsActivity.PREF_SERVER, newServer);
 		    	editor.commit();
 			}
 		}
-		if(key.equalsIgnoreCase("prefShowScheduleReminders") || key.equalsIgnoreCase("prefNoScheduleReminders")){
+		if(key.equalsIgnoreCase(PrefsActivity.PREF_SHOW_SCHEDULE_REMINDERS) || key.equalsIgnoreCase(PrefsActivity.PREF_NO_SCHEDULE_REMINDERS)){
 			displayCourses(userId);
 		}
-		if(key.equalsIgnoreCase("prefPoints")
-				|| key.equalsIgnoreCase("prefBadges")){
+		if(key.equalsIgnoreCase(PrefsActivity.PREF_POINTS)
+				|| key.equalsIgnoreCase(PrefsActivity.PREF_BADGES)){
 			supportInvalidateOptionsMenu();
 		}
 		if(key.equalsIgnoreCase(PrefsActivity.PREF_STORAGE_LOCATION)){
@@ -425,7 +432,7 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 					startActivity(i);
 				}
 			});
-			e.putLong("prefLastMediaScan", 0);
+			e.putLong(PrefsActivity.PREF_LAST_MEDIA_SCAN, 0);
 			e.commit();
 		} else {
 			ll.setVisibility(View.GONE);
@@ -434,7 +441,7 @@ public class OppiaMobileActivity extends AppActivity implements OnSharedPreferen
 			btn.setOnClickListener(null);
 			btn.setTag(null);
 			long now = System.currentTimeMillis()/1000;
-			e.putLong("prefLastMediaScan", now);
+			e.putLong(PrefsActivity.PREF_LAST_MEDIA_SCAN, now);
 			e.commit();
 		}
 	}
