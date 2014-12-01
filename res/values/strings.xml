@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">OppiaMobile</string>
-    <string name="app_logo_alt">Digital Campus Logo</string>
+    <string name="app_name">Medical Aid Films</string>
+    <string name="app_logo_alt">MAF Logo</string>
     
     <string name="about_logged_in">Logged in as: %1$s</string>
     <string name="about_not_logged_in">Not logged in</string>
@@ -54,7 +54,7 @@
     <string name="title_scorecard">Scorecard</string>
     <string name="title_search">Search</string>
     <string name="title_tag_select_activity">Select Category</string>
-    <string name="title_welcome">OppiaMobile</string>
+    <string name="title_welcome">Medical Aid Films</string>
     <string name="version">Version: %1$s</string>
     <string name="title_download_media">Download Media</string>
     

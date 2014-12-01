@@ -180,7 +180,7 @@ public class UpgradeManagerTask extends AsyncTask<Payload, String, Payload> {
 		}
 	}
 	
-	/* switch to using demo.oppia-mobile.org
+	/* switch to using maf.oppia-mobile.org
 	 */
 	protected void upgradeV20(){
 		Editor editor = prefs.edit();
