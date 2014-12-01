@@ -77,7 +77,7 @@ public class SearchResultsListAdapter  extends ArrayAdapter<SearchResult>{
 		
 		if(sr.getCourse().getImageFile() != null){
 			ImageView iv = (ImageView) rowView.findViewById(R.id.course_image);
-			BitmapDrawable bm = ImageUtils.LoadBMPsdcard(sr.getCourse().getImageFileFromRoot(), ctx.getResources(), R.drawable.dc_logo);
+			BitmapDrawable bm = ImageUtils.LoadBMPsdcard(sr.getCourse().getImageFileFromRoot(), ctx.getResources(), R.drawable.maf_logo);
 			iv.setImageDrawable(bm);
 		}
 	   
