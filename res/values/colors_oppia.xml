@@ -8,7 +8,7 @@
     <color name="text_dark">#222222</color>
     <color name="text_light">#ffffff</color>
     <color name="highlight_light">#ec2127</color>
-    <color name="highlight_mid">#ec2127</color>
+    <color name="highlight_mid">#990000</color>
     <color name="highlight_dark">#990000</color>
     <color name="default_icon_foreground">#666666</color>
     <color name="button_background">#eeeeee</color>
