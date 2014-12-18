@@ -58,7 +58,10 @@ public class StartUpActivity extends Activity implements UpgradeListener, PostIn
         setContentView(R.layout.start_up);
         tvProgress = (TextView) this.findViewById(R.id.start_up_progress);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        
+        Editor e = prefs.edit();
+		e.putString(PrefsActivity.PREF_USER_NAME, MobileLearning.ANON_USER_NAME);
+		e.putString(PrefsActivity.PREF_API_KEY, MobileLearning.ANON_API_KEY);
+		e.commit();
         
         UpgradeManagerTask umt = new UpgradeManagerTask(this);
 		umt.setUpgradeListener(this);

@@ -35,6 +35,9 @@ public class MobileLearning extends Application {
 	
 	public static final int APP_LOGO = R.drawable.maf_logo;
 	
+	public static final String ANON_USER_NAME = "anon";
+	public static final String ANON_API_KEY = "anon";
+	
 	public static final String COURSE_XML = "module.xml";
 	public static final String COURSE_SCHEDULE_XML = "schedule.xml";
 	public static final String COURSE_TRACKER_XML = "tracker.xml";
