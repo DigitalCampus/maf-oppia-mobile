@@ -20,7 +20,7 @@ package org.digitalcampus.oppia.widgets;
 import java.util.HashMap;
 import java.util.Locale;
 
-import org.digitalcampus.mobile.learning.R;
+import org.maf.oppia.R;
 import org.digitalcampus.oppia.activity.CourseActivity;
 import org.digitalcampus.oppia.activity.PrefsActivity;
 import org.digitalcampus.oppia.application.MobileLearning;
@@ -37,7 +37,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.webkit.WebSettings.PluginState;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
