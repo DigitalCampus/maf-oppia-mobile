@@ -41,6 +41,7 @@ import org.digitalcampus.oppia.utils.mediaplayer.VideoPlayerActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -153,14 +154,18 @@ public class PageWidget extends WidgetFactory {
 					tb.putSerializable(Course.TAG, course);
 					intent.putExtras(tb);
 					startActivity(intent);
-
-
 					return true;
+					
 				} else {
-					Intent intent = new Intent(Intent.ACTION_VIEW);
-					Uri data = Uri.parse(url);
-					intent.setData(data);
-					PageWidget.super.getActivity().startActivity(intent);
+					
+					try {
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						Uri data = Uri.parse(url);
+						intent.setData(data);
+						PageWidget.super.getActivity().startActivity(intent);
+					} catch (ActivityNotFoundException anfe) {
+						// do nothing
+					}
 					// launch action in mobile browser - not the webview
 					// return true so doesn't follow link within webview
 					return true;
@@ -219,7 +224,7 @@ public class PageWidget extends WidgetFactory {
 			}
 		} catch (JSONException e) {
 			// Do nothing
-		// sometimes get null pointer exception for the MetaDataUtils if the screen is rotated rapidly
+			// sometimes get null pointer exception for the MetaDataUtils if the screen is rotated rapidly
 		} catch (NullPointerException npe){
 			//do nothing
 		}
