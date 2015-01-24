@@ -16,14 +16,12 @@
  */
 package org.digitalcampus.oppia.activity;
 
+
 import java.util.Locale;
 
-import org.maf.oppia.R;
 import org.digitalcampus.oppia.utils.ConnectionUtils;
-import org.digitalcampus.oppia.utils.FileUtils;
-
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import org.digitalcampus.oppia.utils.storage.FileUtils;
+import org.maf.oppia.R;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,6 +31,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class MonitorActivity extends AppActivity {
 	

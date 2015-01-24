@@ -17,15 +17,16 @@
 
 package org.digitalcampus.oppia.activity;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import org.maf.oppia.R;
 import org.digitalcampus.oppia.model.Course;
 import org.digitalcampus.oppia.model.CourseMetaPage;
-import org.digitalcampus.oppia.utils.FileUtils;
+import org.digitalcampus.oppia.utils.storage.FileUtils;
+import org.maf.oppia.R;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

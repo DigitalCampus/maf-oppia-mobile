@@ -17,16 +17,17 @@
 
 package org.digitalcampus.oppia.activity;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.maf.oppia.R;
 import org.digitalcampus.oppia.adapter.ActivityPagerAdapter;
 import org.digitalcampus.oppia.fragments.AboutFragment;
 import org.digitalcampus.oppia.fragments.OppiaWebViewFragment;
 import org.digitalcampus.oppia.fragments.StatsFragment;
-import org.digitalcampus.oppia.utils.FileUtils;
+import org.digitalcampus.oppia.utils.storage.FileUtils;
+import org.maf.oppia.R;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

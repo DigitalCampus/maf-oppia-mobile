@@ -17,32 +17,57 @@
 
 package org.digitalcampus.oppia.fragments;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.maf.oppia.R;
 import org.digitalcampus.oppia.activity.PrefsActivity;
-import org.digitalcampus.oppia.utils.ConnectionUtils;
-import org.digitalcampus.oppia.utils.FileUtils;
+import org.digitalcampus.oppia.adapter.ScorecardListAdapter;
+import org.digitalcampus.oppia.application.DatabaseManager;
+import org.digitalcampus.oppia.application.DbHelper;
+import org.digitalcampus.oppia.model.Course;
+import org.digitalcampus.oppia.utils.ScorecardPieChart;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
+
+import com.androidplot.pie.PieChart;
+import com.androidplot.pie.PieRenderer;
+import com.androidplot.pie.Segment;
+import com.androidplot.pie.SegmentFormatter;
 
 public class ScorecardFragment extends Fragment{
 
 	public static final String TAG = ScorecardFragment.class.getSimpleName();
-	private WebView webView;
 	private SharedPreferences prefs;
+	private Course course = null;
 	
-	public static ScorecardFragment newInstance() {
+    private PieChart pie;
+
+    private Segment segmentCompleted;
+    private Segment segmentStarted;
+    private Segment segmentNotStarted;
+    
+    private ScorecardListAdapter scorecardListAdapter;
+	
+    public static ScorecardFragment newInstance() {
 		ScorecardFragment myFragment = new ScorecardFragment();
+	    return myFragment;
+	}
+    
+	public static ScorecardFragment newInstance(Course course) {
+		ScorecardFragment myFragment = new ScorecardFragment();
+		Bundle args = new Bundle();
+	    args.putSerializable(Course.TAG, course);
+	    myFragment.setArguments(args);
 	    return myFragment;
 	}
 
@@ -53,9 +78,22 @@ public class ScorecardFragment extends Fragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		prefs = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
-		View vv = super.getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_scorecard, null);
-		LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-		vv.setLayoutParams(lp);
+		View vv = null;
+		if( getArguments() != null && getArguments().containsKey(Course.TAG)){
+			vv = super.getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_scorecard, null);
+			LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			vv.setLayoutParams(lp);
+			// refresh course to get most recent info (otherwise gets the info from when course first opened)
+			this.course = (Course) getArguments().getSerializable(Course.TAG);
+			DbHelper db = new DbHelper(super.getActivity());
+			long userId = db.getUserId(prefs.getString(PrefsActivity.PREF_USER_NAME, ""));
+			this.course = db.getCourse(this.course.getCourseId(), userId);
+			DatabaseManager.getInstance().closeDatabase();	
+		} else {
+			vv = super.getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_scorecards, null);
+			LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			vv.setLayoutParams(lp);
+		}
 		return vv;
 	}
 
@@ -67,32 +105,21 @@ public class ScorecardFragment extends Fragment{
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		
 		prefs = PreferenceManager.getDefaultSharedPreferences(super.getActivity());
-		webView = (WebView) super.getActivity().findViewById(R.id.scorecard_fragment_webview);
-		webView.setWebViewClient(new ScoreCardWebViewClient());
-		webView.getSettings().setJavaScriptEnabled(true);
-		String lang = prefs.getString(PrefsActivity.PREF_LANGUAGE, Locale.getDefault().getLanguage());
-		String url = "";
-		url = FileUtils.getLocalizedFilePath(super.getActivity(),lang,"webview_loading.html");
-		webView.loadUrl(url);
-		if(ConnectionUtils.isNetworkConnected(super.getActivity())){
-			url = prefs.getString(PrefsActivity.PREF_SERVER, getString(R.string.prefServer)) + "mobile/scorecard/?";
-			url += "username=" + prefs.getString(PrefsActivity.PREF_USER_NAME, "");
-			url += "&api_key=" + prefs.getString(PrefsActivity.PREF_API_KEY, "");
+
+		if(this.course != null){
+			PieChart pie = (PieChart) super.getActivity().findViewById(R.id.scorecardPieChart);
+			ScorecardPieChart spc = new ScorecardPieChart(super.getActivity(), pie, this.course);
+			spc.drawChart(50, true);
 		} else {
-        	url = FileUtils.getLocalizedFilePath(super.getActivity(),lang,"scorecard_not_available.html");
+			DbHelper db = new DbHelper(super.getActivity());
+			long userId = db.getUserId(prefs.getString(PrefsActivity.PREF_USER_NAME, ""));
+			ArrayList<Course> courses = db.getCourses(userId);
+			DatabaseManager.getInstance().closeDatabase();
+			scorecardListAdapter = new ScorecardListAdapter(super.getActivity(), courses);
+			ListView listView = (ListView) super.getActivity().findViewById(R.id.scorecards_list);
+			listView.setAdapter(scorecardListAdapter);
 		}
-		webView.loadUrl(url);
-
 	}
 
-	private class ScoreCardWebViewClient extends WebViewClient{
-		@Override
-        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-        	String lang = ScorecardFragment.this.prefs.getString(PrefsActivity.PREF_LANGUAGE, Locale.getDefault().getLanguage());
-        	String url = FileUtils.getLocalizedFilePath(ScorecardFragment.this.getActivity(),lang,"scorecard_not_available.html");
-        	webView.loadUrl(url);
-        }
-	}
 }
