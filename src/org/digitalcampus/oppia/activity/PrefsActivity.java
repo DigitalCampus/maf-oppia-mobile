@@ -17,7 +17,6 @@
 
 package org.digitalcampus.oppia.activity;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +27,9 @@ import org.digitalcampus.oppia.task.ChangeStorageOptionTask;
 import org.digitalcampus.oppia.task.Payload;
 import org.digitalcampus.oppia.utils.UIUtils;
 import org.digitalcampus.oppia.utils.storage.FileUtils;
+
 import org.maf.oppia.R;
+
 
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
@@ -131,28 +132,6 @@ public class PrefsActivity extends SherlockPreferenceActivity implements SharedP
         server.setSummary(server.getText());
 
         storagePref = (ListPreference) findPreference(PrefsActivity.PREF_STORAGE_OPTION);
-        /*ListPreference storageList = (ListPreference) findPreference(PrefsActivity.PREF_STORAGE_LOCATION);
-        List<StorageInfo> storageOptionsList = StorageUtils.getStorageList();
-        
-        List<String> storageEntries = new ArrayList<String>();
-	    List<String> storageEntryValues = new ArrayList<String>();
-	    
-	    
-	    storageEntryValues.add(Environment.getExternalStorageDirectory().getPath());
-	    storageEntries.add(getString(R.string.storage_default));
-	    Log.d(TAG,Environment.getExternalStorageDirectory().getPath());
-	    
-        for (StorageInfo temp : storageOptionsList) {
-    		Log.d(TAG,temp.getDisplayName());
-    		Log.d(TAG,temp.path);
-    		storageEntryValues.add(temp.path);
-    		storageEntries.add(temp.getDisplayName());
-    	}
-        final CharSequence[] storageEntryCharSeq = storageEntries.toArray(new CharSequence[storageEntries.size()]);
-        final CharSequence[] storageEntryValsChar = storageEntryValues.toArray(new CharSequence[storageEntryValues.size()]);
-        storageList.setEntries(storageEntryCharSeq);
-        storageList.setEntryValues(storageEntryValsChar);*/
-
 	}
 
 	@Override
