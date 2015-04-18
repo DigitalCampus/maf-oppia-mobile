@@ -1,15 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.maf.oppia"
-    android:versionCode="50"
-    android:versionName="5.0.1">
+    android:versionCode="52"
+    android:versionName="5.1.1">
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
-    <uses-permission
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:name="android.permission.INTERNET" />
@@ -46,13 +45,10 @@
         <activity
             android:name="org.digitalcampus.oppia.activity.CourseActivity"
             android:label="@string/title_activity_course" 
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@style/Oppia.Theme.DarkLandscapeDropdown">
-        </activity>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name="org.digitalcampus.oppia.activity.DownloadActivity"
-            android:label="@string/title_download_activity">
-        </activity>
+            android:label="@string/title_download_activity" />
          <activity
             android:name="org.digitalcampus.oppia.activity.TagSelectActivity"
             android:label="@string/title_tag_select_activity"
@@ -76,8 +72,7 @@
             android:label="@string/title_course_meta" />
          <activity
             android:name="org.digitalcampus.oppia.activity.DownloadMediaActivity"
-            android:label="@string/title_download_media"
-        />
+            android:label="@string/title_download_media" />
          <activity
             android:name="org.digitalcampus.oppia.activity.ScorecardActivity"
             android:label="@string/title_scorecard" />

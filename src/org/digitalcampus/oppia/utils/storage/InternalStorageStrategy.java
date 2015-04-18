@@ -37,6 +37,11 @@ public class InternalStorageStrategy implements StorageAccessStrategy{
     }
 
     //@Override
+    public void updateStorageLocation(Context ctx, String mount) {
+        updateStorageLocation(ctx);
+    }
+
+    //@Override
     public String getStorageLocation(Context ctx) {
         File location = ctx.getFilesDir();
         return location.toString();

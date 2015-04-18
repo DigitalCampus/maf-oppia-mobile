@@ -17,31 +17,29 @@
 
 package org.digitalcampus.oppia.activity;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
+import org.maf.oppia.R;
 import org.digitalcampus.oppia.adapter.ActivityPagerAdapter;
 import org.digitalcampus.oppia.fragments.AboutFragment;
 import org.digitalcampus.oppia.fragments.OppiaWebViewFragment;
 import org.digitalcampus.oppia.fragments.StatsFragment;
 import org.digitalcampus.oppia.utils.storage.FileUtils;
-import org.maf.oppia.R;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
-
-public class AboutActivity extends SherlockFragmentActivity implements ActionBar.TabListener {
+public class AboutActivity extends FragmentActivity implements ActionBar.TabListener {
 
 	public static final String TAG = AboutActivity.class.getSimpleName();
 	
@@ -62,7 +60,7 @@ public class AboutActivity extends SherlockFragmentActivity implements ActionBar
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_about);
-		actionBar = getSupportActionBar();
+		actionBar = getActionBar();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		viewPager = (ViewPager) findViewById(R.id.activity_about_pager);
 		

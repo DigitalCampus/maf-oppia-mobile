@@ -64,8 +64,8 @@ public class DownloadMediaActivity extends AppActivity implements DownloadComple
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download_media);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Bundle bundle = this.getIntent().getExtras();
@@ -193,6 +193,9 @@ public class DownloadMediaActivity extends AppActivity implements DownloadComple
                 ArrayList<Object> data = new ArrayList<Object>();
                 data.add(mediaToDownload);
                 Payload p = new Payload(data);
+
+                mediaToDownload.setDownloading(true);
+                dmla.notifyDataSetChanged();
 
                 DownloadMediaTask task = new DownloadMediaTask(DownloadMediaActivity.this);
                 task.setDownloadListener(tasksController);

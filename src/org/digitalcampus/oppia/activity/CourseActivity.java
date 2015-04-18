@@ -39,6 +39,9 @@ import org.digitalcampus.oppia.widgets.ResourceWidget;
 import org.digitalcampus.oppia.widgets.UrlWidget;
 import org.digitalcampus.oppia.widgets.WidgetFactory;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,17 +51,14 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
-public class CourseActivity extends SherlockFragmentActivity implements ActionBar.TabListener, OnInitListener {
+public class CourseActivity extends FragmentActivity implements ActionBar.TabListener, OnInitListener {
 
 	public static final String TAG = CourseActivity.class.getSimpleName();
 	public static final String BASELINE_TAG = "BASELINE";
@@ -82,7 +82,7 @@ public class CourseActivity extends SherlockFragmentActivity implements ActionBa
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_course);
-		actionBar = getSupportActionBar();
+		actionBar = getActionBar();
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		viewPager = (ViewPager) findViewById(R.id.activity_widget_pager);
 
@@ -111,50 +111,6 @@ public class CourseActivity extends SherlockFragmentActivity implements ActionBa
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		String actionBarTitle = section.getTitle(prefs.getString(PrefsActivity.PREF_LANGUAGE, Locale
-				.getDefault().getLanguage()));
-		if (actionBarTitle != null) {
-			setTitle(actionBarTitle);
-		} else if (isBaseline) {
-			setTitle(getString(R.string.title_baseline));
-		}	
-		actionBar.removeAllTabs();
-		List<Fragment> fragments = new ArrayList<Fragment>();
-		for (int i = 0; i < activities.size(); i++) {
-			Fragment f = null;
-			if (activities.get(i).getActType().equalsIgnoreCase("page")){
-				f = PageWidget.newInstance(activities.get(i), course, isBaseline);
-				fragments.add(f);
-			} else if (activities.get(i).getActType().equalsIgnoreCase("quiz")) {
-				f = QuizWidget.newInstance(activities.get(i), course, isBaseline);
-				fragments.add(f);
-			} else if (activities.get(i).getActType().equalsIgnoreCase("resource")) {
-				f = ResourceWidget.newInstance(activities.get(i), course, isBaseline);
-				fragments.add(f);
-			} else if  (activities.get(i).getActType().equalsIgnoreCase("feedback")){
-				f = FeedbackWidget.newInstance(activities.get(i), course, isBaseline);
-				fragments.add(f);
-			} else if  (activities.get(i).getActType().equalsIgnoreCase("url")){
-				f = UrlWidget.newInstance(activities.get(i), course, isBaseline);
-				fragments.add(f);
-			}
-		}
-		
-		apAdapter = new ActivityPagerAdapter(getSupportFragmentManager(), fragments);
-		viewPager.setAdapter(apAdapter);
-
-		for (int i = 0; i < activities.size(); i++) {
-			String title = activities.get(i).getTitle(
-					prefs.getString(PrefsActivity.PREF_LANGUAGE, Locale.getDefault().getLanguage()));
-			boolean tabSelected = false;
-			if (i == currentActivityNo) {
-				tabSelected = true;
-			}
-			actionBar.addTab(actionBar.newTab().setText(title).setTabListener(this), tabSelected);
-
-		}
-		viewPager.setCurrentItem(currentActivityNo);
 
 		viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -207,12 +163,12 @@ public class CourseActivity extends SherlockFragmentActivity implements ActionBa
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.activity_course, menu);
+		getMenuInflater().inflate(R.menu.activity_course, menu);
 		return true;
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem item = (MenuItem) menu.findItem(R.id.menu_tts);
 		if (ttsRunning) {
 			item.setTitle(R.string.menu_stop_read_aloud);
@@ -226,41 +182,42 @@ public class CourseActivity extends SherlockFragmentActivity implements ActionBa
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		Bundle tb = new Bundle();
-		switch (item.getItemId()) {
-			case R.id.menu_language:
-				createLanguageDialog();
-				return true;
-			case R.id.menu_help:
-				Intent i = new Intent(this, AboutActivity.class);
-				tb.putSerializable(AboutActivity.TAB_ACTIVE, AboutActivity.TAB_HELP);
-				i.putExtras(tb);
-				startActivity(i);
-				return true;			
-			case android.R.id.home:
-				this.finish();
-				return true;
-			case R.id.menu_scorecard:
-				i = new Intent(this, ScorecardActivity.class);
-				tb.putSerializable(Course.TAG, course);
-				i.putExtras(tb);
-				startActivity(i);
-				return true;
-			case R.id.menu_tts:
-				if (myTTS == null && !ttsRunning) {
-					// check for TTS data
-					Intent checkTTSIntent = new Intent();
-					checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-					startActivityForResult(checkTTSIntent, TTS_CHECK);
-				} else if (myTTS != null && ttsRunning) {
-					this.stopReading();
-				} else {
-					// TTS not installed so show message
-					Toast.makeText(this, this.getString(R.string.error_tts_start), Toast.LENGTH_LONG).show();
-				}
-				supportInvalidateOptionsMenu();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
+		Intent i;
+		int itemId = item.getItemId();
+		if (itemId == R.id.menu_language) {
+			createLanguageDialog();
+			return true;
+		} else if (itemId == R.id.menu_help) {
+			i = new Intent(this, AboutActivity.class);
+			tb.putSerializable(AboutActivity.TAB_ACTIVE, AboutActivity.TAB_HELP);
+			i.putExtras(tb);
+			startActivity(i);
+			return true;
+		} else if (itemId == android.R.id.home) {
+			this.finish();
+			return true;
+		} else if (itemId == R.id.menu_scorecard) {
+			i = new Intent(this, ScorecardActivity.class);
+			tb.putSerializable(Course.TAG, course);
+			i.putExtras(tb);
+			startActivity(i);
+			return true;
+		} else if (itemId == R.id.menu_tts) {
+			if (myTTS == null && !ttsRunning) {
+				// check for TTS data
+				Intent checkTTSIntent = new Intent();
+				checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+				startActivityForResult(checkTTSIntent, TTS_CHECK);
+			} else if (myTTS != null && ttsRunning) {
+				this.stopReading();
+			} else {
+				// TTS not installed so show message
+				Toast.makeText(this, this.getString(R.string.error_tts_start), Toast.LENGTH_LONG).show();
+			}
+			supportInvalidateOptionsMenu();
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
 		}
 	}
 

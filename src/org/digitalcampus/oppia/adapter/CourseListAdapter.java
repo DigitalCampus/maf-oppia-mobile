@@ -17,6 +17,7 @@
 
 package org.digitalcampus.oppia.adapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -24,12 +25,12 @@ import org.maf.oppia.R;
 import org.digitalcampus.oppia.activity.PrefsActivity;
 import org.digitalcampus.oppia.application.MobileLearning;
 import org.digitalcampus.oppia.model.Course;
-import org.digitalcampus.oppia.utils.ImageUtils;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class CourseListAdapter extends ArrayAdapter<Course> {
 
@@ -54,12 +57,12 @@ public class CourseListAdapter extends ArrayAdapter<Course> {
 		prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
 	}
 
-
     static class CourseViewHolder{
         TextView courseTitle;
         TextView courseDescription;
         ProgressBar courseProgress;
         ImageView courseImage;
+        ProgressBarAnimator barAnimator;
     }
 
 	@Override
@@ -75,6 +78,7 @@ public class CourseListAdapter extends ArrayAdapter<Course> {
             viewHolder.courseDescription = (TextView) convertView.findViewById(R.id.course_description);
             viewHolder.courseProgress = (ProgressBar) convertView.findViewById(R.id.course_progress_bar);
             viewHolder.courseImage = (ImageView) convertView.findViewById(R.id.course_image);
+            viewHolder.barAnimator = new ProgressBarAnimator(viewHolder);
             convertView.setTag(viewHolder);
         }
         else{
@@ -92,16 +96,57 @@ public class CourseListAdapter extends ArrayAdapter<Course> {
 
 	    if (prefs.getBoolean(PrefsActivity.PREF_SHOW_PROGRESS_BAR, MobileLearning.DEFAULT_DISPLAY_PROGRESS_BAR)){
             viewHolder.courseProgress.setProgress((int) c.getProgressPercent());
+
+            if (!viewHolder.barAnimator.isAnimated()){
+                //We only animate it the first time
+                ValueAnimator anim = ObjectAnimator.ofInt(0, (int) c.getProgressPercent());
+                anim.addUpdateListener(viewHolder.barAnimator);
+                anim.setDuration(1500).start();
+            }
+            //Set the value to true so it doesn' t get animated again
+            viewHolder.barAnimator.setAnimated(true);
+
 	    } else {
             viewHolder.courseProgress.setVisibility(View.GONE);
 	    }
 	    
 		// set image
 		if(c.getImageFile() != null){
-			BitmapDrawable bm = ImageUtils.LoadBMPsdcard(c.getImageFileFromRoot(), ctx.getResources(), MobileLearning.APP_LOGO);
-            viewHolder.courseImage.setImageDrawable(bm);
+			String image = c.getImageFileFromRoot();
+            Picasso.with(ctx).load(new File(image))
+                    .placeholder(R.drawable.default_course)
+                    .into(viewHolder.courseImage);
 		}
+        else{
+            viewHolder.courseImage.setImageResource(R.drawable.default_course);
+        }
 	    return convertView;
 	}
+
+    class ProgressBarAnimator implements ValueAnimator.AnimatorUpdateListener{
+
+        //reference to the view to which the animation is going to be applied
+        private CourseViewHolder viewHolder;
+
+        private boolean animated = false;
+
+        public ProgressBarAnimator (CourseViewHolder holder){
+            viewHolder = holder;
+        }
+
+        //@Override
+        public void onAnimationUpdate(ValueAnimator animator) {
+            viewHolder.courseProgress.setProgress((Integer)animator.getAnimatedValue());
+            viewHolder.courseProgress.invalidate();
+        }
+
+        public boolean isAnimated() {
+            return animated;
+        }
+
+        public void setAnimated(boolean animated) {
+            this.animated = animated;
+        }
+    }
 
 }

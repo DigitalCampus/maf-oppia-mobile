@@ -69,8 +69,8 @@ public class DownloadActivity extends AppActivity implements APIRequestListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_download);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         
 		Bundle bundle = this.getIntent().getExtras(); 
@@ -145,16 +145,16 @@ public class DownloadActivity extends AppActivity implements APIRequestListener,
 	@Override
 	protected void onSaveInstanceState(Bundle savedInstanceState) {
 		super.onSaveInstanceState(savedInstanceState);
-	    if (json != null){
-            //Only save the instance if the request has been proccessed already
-            savedInstanceState.putString("json", json.toString());
-            savedInstanceState.putSerializable("courses", courses);
+            if (json != null){
+                //Only save the instance if the request has been proccessed already
+                savedInstanceState.putString("json", json.toString());
+                savedInstanceState.putSerializable("courses", courses);
 
-            if (tasksController != null){
-                tasksController.setOnDownloadCompleteListener(null);
-                savedInstanceState.putParcelable("tasksProgress", tasksController);
+                if (tasksController != null){
+                    tasksController.setOnDownloadCompleteListener(null);
+                    savedInstanceState.putParcelable("tasksProgress", tasksController);
+                }
             }
-        }
 
 	}
 	
